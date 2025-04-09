@@ -11,13 +11,18 @@ A command-line utility for parsing disk information and outputting in Telegraf-c
 
 ## Metrics Collected
 
+### Tags
+- `box`: Box identifier (integer)
+- `bay`: Bay identifier (integer)
+- `size_gb`: Disk size in GB (integer)
+
+### Fields
 - `usage_remaining`: Remaining disk usage percentage
 - `estimated_life_remaining`: Estimated remaining life in days
 - `status`: Disk status (1.0 = OK, 0.0 = Not OK)
 - `current_temperature`: Current disk temperature
 - `maximum_temperature`: Maximum recorded temperature
 - `power_on_hours`: Hours the disk has been powered on
-- `size_gb`: Disk size in GB
 
 ## Getting Started
 
@@ -72,7 +77,7 @@ cat input.txt | ./telegraf_diskparser
 ## Example Output
 
 ```
-disk,box=1,bay=1 current_temperature=35.000000,estimated_life_remaining=730.000000,maximum_temperature=38.000000,power_on_hours=8760.000000,size_gb=1024.000000,status=1.000000,usage_remaining=94.500000
+disk,box=1,bay=1,size_gb=1024 current_temperature=35.000000,estimated_life_remaining=730.000000,maximum_temperature=38.000000,power_on_hours=8760.000000,status=1.000000,usage_remaining=94.500000
 ```
 
 ## License

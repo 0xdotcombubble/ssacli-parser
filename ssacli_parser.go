@@ -37,6 +37,8 @@ func parse(content string) {
 	
 	// Maps to store metrics for each disk
 	diskMetrics := make(map[DiskKey]map[string]float64)
+	// Map to store disk sizes as tags
+	diskSizes := make(map[DiskKey]float64)
 	
 	scanner := bufio.NewScanner(strings.NewReader(content))
 	for scanner.Scan() {
@@ -116,7 +118,8 @@ func parse(content string) {
 			}
 			
 			if err == nil {
-				diskMetrics[diskKey]["size_gb"] = metricValue
+				// Store size in the diskSizes map instead of metrics
+				diskSizes[diskKey] = metricValue
 			} else {
 				log.Printf("Error parsing size: %v", err)
 			}
@@ -141,8 +144,17 @@ func parse(content string) {
 	for _, key := range keys {
 		metrics := diskMetrics[key]
 		
-		// Build tags string
-		tags := fmt.Sprintf("box=%d,bay=%d", key.Box, key.Bay)
+		// Build tags string with box, bay, and size (if available)
+		tagsArray := []string{fmt.Sprintf("box=%d", key.Box), fmt.Sprintf("bay=%d", key.Bay)}
+		
+		// Add size as a tag if available
+		if size, exists := diskSizes[key]; exists {
+			// Use integer value for size in tags to avoid float precision issues
+			tagsArray = append(tagsArray, fmt.Sprintf("size_gb=%d", int(size)))
+		}
+		
+		// Join all tags
+		tags := strings.Join(tagsArray, ",")
 		
 		// Get sorted metric names
 		var metricNames []string
